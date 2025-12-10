@@ -36,8 +36,15 @@ class MyApp extends StatelessWidget {
       ),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Auth SDK Demo (Default + Headless)',
-        theme: ThemeData(useMaterial3: true, primarySwatch: Colors.blue),
+        title: 'Auth SDK Demo',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF6366F1),
+            brightness: Brightness.light,
+          ),
+          typography: Typography.material2021(),
+        ),
         home: const MainDemoScreen(),
       ),
     );
@@ -70,22 +77,59 @@ class _MainDemoScreenState extends State<MainDemoScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Auth SDK — Default + Headless'),
-        bottom: TabBar(
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            expandedHeight: 140,
+            floating: true,
+            snap: true,
+            elevation: innerBoxIsScrolled ? 2 : 0,
+            flexibleSpace: FlexibleSpaceBar(
+              title: const Text(
+                'Auth SDK',
+                style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5),
+              ),
+              background: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                    ],
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Center(
+                    child: Text(
+                      'Default & Headless Modes',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: Colors.white70,
+                            letterSpacing: 0.5,
+                          ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            bottom: TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(text: 'Pre-built UI', icon: Icon(Icons.widgets)),
+                Tab(text: 'Headless', icon: Icon(Icons.code)),
+              ],
+            ),
+          ),
+        ],
+        body: TabBarView(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'Pre-built UI'),
-            Tab(text: 'Headless UI'),
+          children: const [
+            PrebuiltUiExample(),
+            HeadlessUiExample(),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [
-          PrebuiltUiExample(),
-          HeadlessUiExample(),
-        ],
       ),
     );
   }
@@ -97,31 +141,70 @@ class PrebuiltUiExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 420),
-        child: Card(
-          margin: const EdgeInsets.all(24),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: AuthWidget(
-              onSuccess: () {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Login successful (pre-built)!')),
-                  );
-                }
-              },
-              onError: (error) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Pre-built UI error: ${error.message}'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
+    return SingleChildScrollView(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Ready-to-use',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Just drop in AuthWidget and let it handle the rest',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                ),
+                const SizedBox(height: 32),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: AuthWidget(
+                    onSuccess: () {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Welcome! 🎉'),
+                            backgroundColor: Colors.green[600],
+                            duration: const Duration(seconds: 2),
+                            behavior: SnackBarBehavior.floating,
+                            margin: const EdgeInsets.all(16),
+                          ),
+                        );
+                      }
+                    },
+                    onError: (error) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(error.message),
+                            backgroundColor: Colors.red[600],
+                            behavior: SnackBarBehavior.floating,
+                            margin: const EdgeInsets.all(16),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -141,10 +224,11 @@ class HeadlessUiExample extends StatefulWidget {
 class _HeadlessUiExampleState extends State<HeadlessUiExample> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  bool _showPassword = false;
 
   late final Stream<AuthUser?> _userStream;
+
   Stream<AuthUser?> createAuthUserStream(AuthProvider provider) {
-    // Creates a Stream that emits the provider.user whenever the provider changes.
     late final StreamController<AuthUser?> controller;
 
     void _listener() {
@@ -166,19 +250,13 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
       },
     );
 
-    // For safety, return a stream that emits current value and subsequent updates.
-    // Note: provider listener will be attached when the stream is listened to.
     return controller.stream;
   }
-
-  // We keep a no-op placeholder; actual listener is created inside `createAuthUserStream`.
-  void _listener() {}
 
   @override
   void initState() {
     super.initState();
     final provider = Provider.of<AuthProvider>(context, listen: false);
-    // Create the stream using provider; stream attaches listeners when observed.
     _userStream = createAuthUserStream(provider);
   }
 
@@ -196,7 +274,12 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Email sign-in error: $e')),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red[600],
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+          ),
         );
       }
     }
@@ -209,7 +292,12 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Google sign-in error: $e')),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red[600],
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+          ),
         );
       }
     }
@@ -219,15 +307,15 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
     final provider = context.read<AuthProvider>();
     try {
       await provider.signOut();
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Signed out')),
-        );
-      }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Sign-out error: $e')),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red[600],
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+          ),
         );
       }
     }
@@ -235,116 +323,258 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          // StreamBuilder demonstrates how a developer can listen to auth state updates
-          StreamBuilder<AuthUser?>(
-            stream: _userStream,
-            builder: (context, snapshot) {
-              final user = snapshot.data;
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const ListTile(
-                  leading: CircularProgressIndicator(),
-                  title: Text('Waiting for auth state...'),
-                );
-              }
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Column(
+            children: [
+              StreamBuilder<AuthUser?>(
+                stream: _userStream,
+                builder: (context, snapshot) {
+                  final user = snapshot.data;
 
-              if (user == null) {
-                return const ListTile(
-                  leading: Icon(Icons.person_off),
-                  title: Text('Not signed in'),
-                  subtitle: Text('Use the form below to sign in (headless).'),
-                );
-              }
-
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
-                  child: user.photoUrl == null ? Text(user.email?.substring(0, 1).toUpperCase() ?? 'U') : null,
-                ),
-                title: Text(user.displayName ?? user.email ?? 'User'),
-                subtitle: Text('ID: ${user.uid}\nProvider: ${user.provider}'),
-                isThreeLine: true,
-                trailing: ElevatedButton.icon(
-                  icon: const Icon(Icons.logout),
-                  label: const Text('Sign out'),
-                  onPressed: _signOut,
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 16),
-
-          // Custom sign-in form (headless) — uses provider methods directly
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _emailCtrl,
-                      decoration: const InputDecoration(labelText: 'Email'),
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _passCtrl,
-                      decoration: const InputDecoration(labelText: 'Password'),
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 12),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  if (user == null) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ElevatedButton(
-                          onPressed: _signInWithEmail,
-                          child: const Text('Sign in (email)'),
+                        Text(
+                          'Sign in to continue',
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: -0.5,
+                              ),
                         ),
-                        ElevatedButton.icon(
-                          onPressed: _signInWithGoogle,
-                          icon: const Icon(Icons.login),
-                          label: const Text('Sign in (Google)'),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Build custom auth flows with full control',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Colors.grey[600],
+                              ),
+                        ),
+                        const SizedBox(height: 32),
+                        TextField(
+                          controller: _emailCtrl,
+                          decoration: InputDecoration(
+                            hintText: 'you@example.com',
+                            prefixIcon: const Icon(Icons.mail_outline),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(width: 1.5),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                width: 1.5,
+                                color: Colors.grey[300]!,
+                              ),
+                            ),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: _passCtrl,
+                          obscureText: !_showPassword,
+                          decoration: InputDecoration(
+                            hintText: 'Password',
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _showPassword ? Icons.visibility : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _showPassword = !_showPassword;
+                                });
+                              },
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(width: 1.5),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                width: 1.5,
+                                color: Colors.grey[300]!,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Consumer<AuthProvider>(
+                          builder: (context, provider, _) {
+                            return Column(
+                              children: [
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 48,
+                                  child: ElevatedButton(
+                                    onPressed: provider.isLoading ? null : _signInWithEmail,
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: provider.isLoading
+                                        ? const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2.5,
+                                            ),
+                                          )
+                                        : const Text(
+                                            'Sign in with Email',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Divider(color: Colors.grey[300]),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                                      child: Text(
+                                        'or',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(color: Colors.grey[300]),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 48,
+                                  child: OutlinedButton.icon(
+                                    onPressed: provider.isLoading ? null : _signInWithGoogle,
+                                    style: OutlinedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      side: BorderSide(
+                                        color: Colors.grey[300]!,
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    icon: const Icon(Icons.login),
+                                    label: const Text(
+                                      'Continue with Google',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ],
-                    ),
+                    );
+                  }
 
-                    const SizedBox(height: 12),
-
-                    // Demonstration: read provider state directly (fallback to notify UI)
-                    Consumer<AuthProvider>(
-                      builder: (context, provider, _) {
-                        if (provider.isLoading) {
-                          return const LinearProgressIndicator();
-                        }
-                        if (provider.isAuthenticated) {
-                          return Text('Provider reports: authenticated', style: TextStyle(color: Colors.green[700]));
-                        }
-                        return const Text('Provider reports: unauthenticated');
-                      },
-                    ),
-                  ],
-                ),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome back!',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.5,
+                            ),
+                      ),
+                      const SizedBox(height: 24),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 28,
+                              backgroundImage: user.photoUrl != null
+                                  ? NetworkImage(user.photoUrl!)
+                                  : null,
+                              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                              child: user.photoUrl == null
+                                  ? Text(
+                                      user.email?.substring(0, 1).toUpperCase() ?? 'U',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    user.displayName ?? user.email ?? 'User',
+                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Logged in via ${user.provider}',
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                          color: Colors.grey[600],
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton.icon(
+                          onPressed: _signOut,
+                          icon: const Icon(Icons.logout),
+                          label: const Text('Sign Out'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red[50],
+                            foregroundColor: Colors.red[700],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
-            ),
+            ],
           ),
-
-          const SizedBox(height: 12),
-
-          // A short note to developers
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              'Headless mode: call the provider methods (e.g., signInWithEmail, signInWithGoogle, signOut) and listen to auth updates via ChangeNotifier or a stream as shown.',
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
