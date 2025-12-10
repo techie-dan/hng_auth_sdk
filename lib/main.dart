@@ -100,18 +100,6 @@ class _MainDemoScreenState extends State<MainDemoScreen>
                     ],
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Center(
-                    child: Text(
-                      'Default & Headless Modes',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: Colors.white70,
-                            letterSpacing: 0.5,
-                          ),
-                    ),
-                  ),
-                ),
               ),
             ),
             bottom: TabBar(
