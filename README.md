@@ -161,6 +161,24 @@ dependencies {
 apply plugin: 'com.google.gms.google-services'
 ```
 
+### 4. Secrets Configuration
+This project uses a secrets file to keep sensitive keys out of source control.
+
+1. Create a new file `lib/firebase_secrets.dart`
+2. Add your Firebase keys (found in your `GoogleService-Info.plist` or Firebase Console):
+
+```dart
+class FirebaseSecrets {
+  static const String iosApiKey = 'YOUR_IOS_API_KEY';
+  static const String iosAppId = 'YOUR_IOS_APP_ID';
+  static const String iosMessagingSenderId = 'YOUR_IOS_SENDER_ID';
+  static const String iosProjectId = 'YOUR_PROJECT_ID';
+  static const String iosStorageBucket = 'YOUR_STORAGE_BUCKET';
+  static const String iosBundleId = 'YOUR_BUNDLE_ID';
+}
+```
+*Note: This file is ignored by git to protect your credentials.*
+
 ## 🚀 Quick Start
 
 ### Using Default Mode (Pre-built UI)

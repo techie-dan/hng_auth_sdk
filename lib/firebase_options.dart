@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
+import 'firebase_secrets.dart';
+
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -45,12 +47,12 @@ class DefaultFirebaseOptions {
     storageBucket: 'DUMMY_ANDROID_STORAGE_BUCKET',
   );
 
- static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'DUMMY_IOS_API_KEY',
-    appId: 'DUMMY_IOS_APP_ID',
-    messagingSenderId: 'DUMMY_IOS_MESSAGING_SENDER_ID',
-    projectId: 'DUMMY_IOS_PROJECT_ID',
-    storageBucket: 'DUMMY_IOS_STORAGE_BUCKET',
-    iosBundleId: 'DUMMY_IOS_BUNDLE_ID',
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: FirebaseSecrets.iosApiKey,
+    appId: FirebaseSecrets.iosAppId,
+    messagingSenderId: FirebaseSecrets.iosMessagingSenderId,
+    projectId: FirebaseSecrets.iosProjectId,
+    storageBucket: FirebaseSecrets.iosStorageBucket,
+    iosBundleId: FirebaseSecrets.iosBundleId,
   );
 }
