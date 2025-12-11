@@ -38,19 +38,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB4IqQYB7guTRc-taEuFw6YkjklCWVhYMs',
-    appId: '1:1044070415460:android:8788ec7a7e10fba004f371',
-    messagingSenderId: '1044070415460',
-    projectId: 'hng-auth-sdk-72965',
-    storageBucket: 'hng-auth-sdk-72965.firebasestorage.app',
+    apiKey: 'DUMMY_ANDROID_API_KEY',
+    appId: 'DUMMY_ANDROID_APP_ID',
+    messagingSenderId: 'DUMMY_ANDROID_MESSAGING_SENDER_ID',
+    projectId: 'DUMMY_ANDROID_PROJECT_ID',
+    storageBucket: 'DUMMY_ANDROID_STORAGE_BUCKET',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAbr9jYAT6A03ojaVtsezQoOyeBVVJi1fE',
-    appId: '1:1044070415460:ios:420387fca2419d3104f371',
-    messagingSenderId: '1044070415460',
-    projectId: 'hng-auth-sdk-72965',
-    storageBucket: 'hng-auth-sdk-72965.firebasestorage.app',
-    iosBundleId: 'com.example.hngFirebaseAuth',
+ static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'DUMMY_IOS_API_KEY',
+    appId: 'DUMMY_IOS_APP_ID',
+    messagingSenderId: 'DUMMY_IOS_MESSAGING_SENDER_ID',
+    projectId: 'DUMMY_IOS_PROJECT_ID',
+    storageBucket: 'DUMMY_IOS_STORAGE_BUCKET',
+    iosBundleId: 'DUMMY_IOS_BUNDLE_ID',
   );
 }

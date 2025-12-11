@@ -1,8 +1,8 @@
 class AuthConfig {
   final Map<String, bool> providers;
-  
+
   final bool autoRefreshToken;
-  
+
   final int tokenRefreshInterval;
 
   const AuthConfig({

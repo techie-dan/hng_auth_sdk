@@ -4,8 +4,6 @@ import '../providers/auth_provider.dart';
 import '../exceptions/auth_exceptions.dart';
 import '../core/auth_state.dart';
 
-
-
 class AuthWidget extends StatefulWidget {
   final VoidCallback? onSuccess;
   final void Function(AuthException)? onError;
@@ -43,7 +41,7 @@ class _AuthWidgetState extends State<AuthWidget> {
 
     try {
       final authProvider = context.read<AuthProvider>();
-      
+
       if (_isSignInMode) {
         await authProvider.signInWithEmail(
           _emailController.text.trim(),
@@ -55,7 +53,7 @@ class _AuthWidgetState extends State<AuthWidget> {
           _passwordController.text,
         );
       }
-      
+
       widget.onSuccess?.call();
     } on AuthException catch (e) {
       if (!mounted) return;
@@ -70,13 +68,13 @@ class _AuthWidgetState extends State<AuthWidget> {
 
     try {
       final authProvider = context.read<AuthProvider>();
-      
+
       if (provider == 'google') {
         await authProvider.signInWithGoogle();
       } else if (provider == 'apple') {
         await authProvider.signInWithApple();
       }
-      
+
       widget.onSuccess?.call();
     } on AuthException catch (e) {
       if (!mounted) return;
@@ -106,23 +104,19 @@ class _AuthWidgetState extends State<AuthWidget> {
                   Text(
                     _isSignInMode ? 'Welcome Back' : 'Create Account',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
-                  
                   const SizedBox(height: 8),
-                  
                   Text(
                     _isSignInMode
                         ? 'Sign in to continue'
                         : 'Sign up to get started',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                          color: Colors.grey[600],
+                        ),
                   ),
-                  
                   const SizedBox(height: 24),
-
                   if (_errorMessage != null)
                     Container(
                       padding: const EdgeInsets.all(12),
@@ -134,7 +128,7 @@ class _AuthWidgetState extends State<AuthWidget> {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.error_outline, 
+                          Icon(Icons.error_outline,
                               color: Colors.red.shade700, size: 20),
                           const SizedBox(width: 8),
                           Expanded(
@@ -149,7 +143,6 @@ class _AuthWidgetState extends State<AuthWidget> {
                         ],
                       ),
                     ),
-
                   Form(
                     key: _formKey,
                     child: Column(
@@ -177,9 +170,7 @@ class _AuthWidgetState extends State<AuthWidget> {
                             return null;
                           },
                         ),
-                        
                         const SizedBox(height: 16),
-
                         TextFormField(
                           controller: _passwordController,
                           decoration: InputDecoration(
@@ -215,9 +206,7 @@ class _AuthWidgetState extends State<AuthWidget> {
                             return null;
                           },
                         ),
-                        
                         const SizedBox(height: 24),
-
                         SizedBox(
                           width: double.infinity,
                           height: 50,
@@ -252,7 +241,6 @@ class _AuthWidgetState extends State<AuthWidget> {
                       ],
                     ),
                   ),
-
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     child: Row(
@@ -272,8 +260,6 @@ class _AuthWidgetState extends State<AuthWidget> {
                       ],
                     ),
                   ),
-
-                  
                   if (!isLoading) ...[
                     SizedBox(
                       width: double.infinity,
@@ -290,9 +276,7 @@ class _AuthWidgetState extends State<AuthWidget> {
                         ),
                       ),
                     ),
-                    
                     const SizedBox(height: 12),
-
                     SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -309,9 +293,7 @@ class _AuthWidgetState extends State<AuthWidget> {
                       ),
                     ),
                   ],
-
                   const SizedBox(height: 24),
-
                   TextButton(
                     onPressed: isLoading
                         ? null
