@@ -3,7 +3,6 @@ import '../core/auth_sdk.dart';
 import '../core/auth_state.dart';
 import '../core/auth_config.dart';
 
-
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuthSDK _sdk;
   AuthStatus _status;

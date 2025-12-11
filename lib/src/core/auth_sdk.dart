@@ -6,19 +6,17 @@ import '../exceptions/auth_exceptions.dart';
 import 'auth_state.dart';
 import 'auth_config.dart';
 
-
-
 class FirebaseAuthSDK {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final AuthConfig config;
-  
+
   final _statusController = StreamController<AuthStatus>.broadcast();
-  
+
   AuthStatus _currentStatus = const AuthStatus(
     state: AuthState.unauthenticated,
   );
-  
+
   Timer? _tokenRefreshTimer;
 
   FirebaseAuthSDK({this.config = const AuthConfig()}) {
@@ -26,7 +24,7 @@ class FirebaseAuthSDK {
   }
 
   Stream<AuthStatus> get authStatusStream => _statusController.stream;
-  
+
   AuthStatus get currentStatus => _currentStatus;
 
   void _initialize() {
@@ -36,7 +34,7 @@ class FirebaseAuthSDK {
           state: AuthState.authenticated,
           user: AuthUser.fromFirebaseUser(user, 'email'),
         ));
-        
+
         if (config.autoRefreshToken) {
           _scheduleTokenRefresh();
         }
@@ -78,12 +76,10 @@ class FirebaseAuthSDK {
     }
   }
 
-
   Future<void> signInWithEmail(String email, String password) async {
-    print('📧 Attempting email sign in...');
     try {
       _updateStatus(_currentStatus.copyWith(state: AuthState.loading));
-      
+
       await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -103,7 +99,7 @@ class FirebaseAuthSDK {
   Future<void> signUpWithEmail(String email, String password) async {
     try {
       _updateStatus(_currentStatus.copyWith(state: AuthState.loading));
-      
+
       await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -122,21 +118,21 @@ class FirebaseAuthSDK {
     print('🔍 Attempting Google sign in...');
     try {
       _updateStatus(_currentStatus.copyWith(state: AuthState.loading));
-      
+
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         print('⚠️  Google sign in cancelled by user');
         _updateStatus(const AuthStatus(state: AuthState.unauthenticated));
         return;
       }
-      
+
       print('✅ Got Google user: ${googleUser.email}');
       final googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      
+
       await _auth.signInWithCredential(credential);
       print('✅ Google sign in successful');
     } catch (e) {
@@ -153,19 +149,19 @@ class FirebaseAuthSDK {
   Future<void> signInWithApple() async {
     try {
       _updateStatus(_currentStatus.copyWith(state: AuthState.loading));
-      
+
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
       );
-      
+
       final oauthCredential = OAuthProvider('apple.com').credential(
         idToken: appleCredential.identityToken,
         accessToken: appleCredential.authorizationCode,
       );
-      
+
       await _auth.signInWithCredential(oauthCredential);
     } catch (e) {
       final error = mapFirebaseError(e);

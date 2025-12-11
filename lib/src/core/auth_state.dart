@@ -24,7 +24,7 @@ class AuthStatus {
     AuthState? state,
     AuthUser? user,
     Exception? error,
-    }) {
+  }) {
     return AuthStatus(
       state: state ?? this.state,
       user: user ?? this.user,

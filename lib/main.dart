@@ -87,7 +87,8 @@ class _MainDemoScreenState extends State<MainDemoScreen>
             flexibleSpace: FlexibleSpaceBar(
               title: const Text(
                 'Auth SDK',
-                style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5),
+                style:
+                    TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5),
               ),
               background: Container(
                 decoration: BoxDecoration(
@@ -329,7 +330,10 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
                       children: [
                         Text(
                           'Sign in to continue',
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: -0.5,
                               ),
@@ -337,9 +341,10 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
                         const SizedBox(height: 8),
                         Text(
                           'Build custom auth flows with full control',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
                         ),
                         const SizedBox(height: 32),
                         TextField(
@@ -370,7 +375,9 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
                             prefixIcon: const Icon(Icons.lock_outline),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _showPassword ? Icons.visibility : Icons.visibility_off,
+                                _showPassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -400,7 +407,9 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
                                   width: double.infinity,
                                   height: 48,
                                   child: ElevatedButton(
-                                    onPressed: provider.isLoading ? null : _signInWithEmail,
+                                    onPressed: provider.isLoading
+                                        ? null
+                                        : _signInWithEmail,
                                     style: ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
@@ -430,7 +439,8 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
                                       child: Divider(color: Colors.grey[300]),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12),
                                       child: Text(
                                         'or',
                                         style: TextStyle(
@@ -449,7 +459,9 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
                                   width: double.infinity,
                                   height: 48,
                                   child: OutlinedButton.icon(
-                                    onPressed: provider.isLoading ? null : _signInWithGoogle,
+                                    onPressed: provider.isLoading
+                                        ? null
+                                        : _signInWithGoogle,
                                     style: OutlinedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
@@ -482,7 +494,10 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
                     children: [
                       Text(
                         'Welcome back!',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(
                               fontWeight: FontWeight.w700,
                               letterSpacing: -0.5,
                             ),
@@ -491,10 +506,15 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .outline
+                                .withOpacity(0.2),
                           ),
                         ),
                         child: Row(
@@ -504,10 +524,15 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
                               backgroundImage: user.photoUrl != null
                                   ? NetworkImage(user.photoUrl!)
                                   : null,
-                              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
                               child: user.photoUrl == null
                                   ? Text(
-                                      user.email?.substring(0, 1).toUpperCase() ?? 'U',
+                                      user.email
+                                              ?.substring(0, 1)
+                                              .toUpperCase() ??
+                                          'U',
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
@@ -522,14 +547,20 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
                                 children: [
                                   Text(
                                     user.displayName ?? user.email ?? 'User',
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
                                           fontWeight: FontWeight.w600,
                                         ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     'Logged in via ${user.provider}',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
                                           color: Colors.grey[600],
                                         ),
                                   ),
