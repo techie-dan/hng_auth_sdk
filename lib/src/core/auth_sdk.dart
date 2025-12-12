@@ -84,10 +84,8 @@ class FirebaseAuthSDK {
         email: email,
         password: password,
       );
-      print('✅ Email sign in successful');
     } catch (e) {
-      print('❌ Email sign in error: $e');
-      final error = mapFirebaseError(e);
+      final error = e is AuthException ? e : mapFirebaseError(e);
       _updateStatus(AuthStatus(
         state: AuthState.unauthenticated,
         error: error,
@@ -105,7 +103,7 @@ class FirebaseAuthSDK {
         password: password,
       );
     } catch (e) {
-      final error = mapFirebaseError(e);
+      final error = e is AuthException ? e : mapFirebaseError(e);
       _updateStatus(AuthStatus(
         state: AuthState.unauthenticated,
         error: error,
@@ -115,18 +113,20 @@ class FirebaseAuthSDK {
   }
 
   Future<void> signInWithGoogle() async {
-    print('🔍 Attempting Google sign in...');
     try {
       _updateStatus(_currentStatus.copyWith(state: AuthState.loading));
 
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        print('⚠️  Google sign in cancelled by user');
-        _updateStatus(const AuthStatus(state: AuthState.unauthenticated));
-        return;
+        // User cancelled the sign-in flow
+        const error = SignInCancelledException('Google sign-in was cancelled');
+        _updateStatus(AuthStatus(
+          state: AuthState.unauthenticated,
+          error: error,
+        ));
+        throw error;
       }
 
-      print('✅ Got Google user: ${googleUser.email}');
       final googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -134,10 +134,10 @@ class FirebaseAuthSDK {
       );
 
       await _auth.signInWithCredential(credential);
-      print('✅ Google sign in successful');
+    } on SignInCancelledException {
+      rethrow;
     } catch (e) {
-      print('❌ Google sign in error: $e');
-      final error = mapFirebaseError(e);
+      final error = e is AuthException ? e : mapFirebaseError(e);
       _updateStatus(AuthStatus(
         state: AuthState.unauthenticated,
         error: error,
@@ -163,8 +163,23 @@ class FirebaseAuthSDK {
       );
 
       await _auth.signInWithCredential(oauthCredential);
+    } on SignInCancelledException {
+      rethrow;
     } catch (e) {
-      final error = mapFirebaseError(e);
+      // Check for Apple Sign-In cancellation (AuthorizationErrorCode.canceled)
+      final errorString = e.toString().toLowerCase();
+      if (errorString.contains('authorizationerrorcode.canceled') ||
+          errorString.contains('user canceled') ||
+          errorString.contains('cancelled')) {
+        const error = SignInCancelledException('Apple sign-in was cancelled');
+        _updateStatus(AuthStatus(
+          state: AuthState.unauthenticated,
+          error: error,
+        ));
+        throw error;
+      }
+
+      final error = e is AuthException ? e : mapFirebaseError(e);
       _updateStatus(AuthStatus(
         state: AuthState.unauthenticated,
         error: error,

@@ -9,7 +9,7 @@ class AuthConfig {
     this.providers = const {
       'email': true,
       'google': true,
-      'apple': true,
+      'apple': false,
     },
     this.autoRefreshToken = true,
     this.tokenRefreshInterval = 3000000,

@@ -5,10 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
-import 'src/providers/auth_provider.dart';
-import 'src/ui/auth_widget.dart';
-import 'src/core/auth_config.dart';
-import 'src/core/auth_state.dart';
+// Import the SDK barrel file which exports all types including exceptions
+import 'hng_firebase_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -85,11 +83,6 @@ class _MainDemoScreenState extends State<MainDemoScreen>
             snap: true,
             elevation: innerBoxIsScrolled ? 2 : 0,
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text(
-                'Auth SDK',
-                style:
-                    TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5),
-              ),
               background: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -124,7 +117,7 @@ class _MainDemoScreenState extends State<MainDemoScreen>
   }
 }
 
-/// Default Mode: Plug-and-play pre-built UI (uses `AuthWidget`)
+/// pre-built UI
 class PrebuiltUiExample extends StatelessWidget {
   const PrebuiltUiExample({super.key});
 
@@ -260,17 +253,18 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
     final provider = context.read<AuthProvider>();
     try {
       await provider.signInWithEmail(_emailCtrl.text.trim(), _passCtrl.text);
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red[600],
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(16),
-          ),
-        );
-      }
+    } on InvalidCredentialsException catch (e) {
+      _showErrorSnackBar(e.message, icon: Icons.password);
+    } on UserNotFoundException catch (e) {
+      _showErrorSnackBar(e.message, icon: Icons.person_off);
+    } on InvalidEmailException catch (e) {
+      _showErrorSnackBar(e.message, icon: Icons.email);
+    } on NetworkException catch (e) {
+      _showErrorSnackBar(e.message, icon: Icons.wifi_off);
+    } on TooManyRequestsException catch (e) {
+      _showErrorSnackBar(e.message, icon: Icons.timer_off);
+    } on AuthException catch (e) {
+      _showErrorSnackBar(e.message);
     }
   }
 
@@ -278,17 +272,13 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
     final provider = context.read<AuthProvider>();
     try {
       await provider.signInWithGoogle();
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red[600],
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(16),
-          ),
-        );
-      }
+    } on SignInCancelledException {
+      // User cancelled - no need to show an error
+      return;
+    } on NetworkException catch (e) {
+      _showErrorSnackBar(e.message, icon: Icons.wifi_off);
+    } on AuthException catch (e) {
+      _showErrorSnackBar(e.message);
     }
   }
 
@@ -296,18 +286,30 @@ class _HeadlessUiExampleState extends State<HeadlessUiExample> {
     final provider = context.read<AuthProvider>();
     try {
       await provider.signOut();
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red[600],
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(16),
-          ),
-        );
-      }
+    } on AuthException catch (e) {
+      _showErrorSnackBar(e.message);
     }
+  }
+
+  void _showErrorSnackBar(String message, {IconData? icon}) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+            ],
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: Colors.red[600],
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
   }
 
   @override
