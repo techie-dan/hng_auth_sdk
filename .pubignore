@@ -6,7 +6,8 @@ linux/
 windows/
 web/
 
-# Exclude secrets in example
+# Exclude secrets
+lib/firebase_secrets.dart
 example/ios/Runner/GoogleService-Info.plist
 example/android/app/google-services.json
 example/lib/firebase_secrets.dart
@@ -14,3 +15,12 @@ example/lib/firebase_secrets.dart
 # Exclude generated files
 .dart_tool/
 build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Logs and misc
+flutter_run.log
+*.log
+.DS_Store
+.idea/
+*.iml
