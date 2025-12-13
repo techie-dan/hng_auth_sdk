@@ -187,12 +187,11 @@ packages:
   hng_firebase_auth:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: d6e96987b8b8a5c307a616e54624c4301b644c44
-      url: "https://github.com/techie-dan/hng_auth_sdk.git"
-    source: git
-    version: "1.0.0+1"
+      name: hng_firebase_auth
+      sha256: da4497457cc22399d08fea4399f084cf4b767417b00c190dfe2784d192d135a7
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   http:
     dependency: transitive
     description:
