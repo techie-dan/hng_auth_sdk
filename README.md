@@ -517,6 +517,9 @@ This project is part of the HNG internship task.
 - [x] Automatic token refresh
 - [x] Stream-based state updates
 
+## HOSTING LINK
+- https://pub.dev/packages/hng_firebase_auth
+
 ---
 
 **Made with ❤️ for HNG Internship**
