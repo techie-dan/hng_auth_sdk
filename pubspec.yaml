@@ -17,7 +17,7 @@ description: A simple and modular Firebase authentication wrapper for Flutter, s
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.1
 repository: https://github.com/techie-dan/hng_auth_sdk.git
 
 environment:

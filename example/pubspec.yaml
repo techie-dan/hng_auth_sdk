@@ -1,0 +1,35 @@
+name: hng_firebase_auth_example
+description: Example app demonstrating the hng_firebase_auth SDK
+
+publish_to: 'none' # This is an example app, not meant to be published
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Use the SDK from GitHub (latest code with exception handling)
+  hng_firebase_auth:
+    git:
+      url: https://github.com/techie-dan/hng_auth_sdk.git
+      ref: main
+  
+  # Firebase core - needed for initialization
+  firebase_core: ^2.32.0
+  
+  # Provider for state management (re-exported from SDK but may be needed directly)
+  provider: ^6.1.1
+  
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

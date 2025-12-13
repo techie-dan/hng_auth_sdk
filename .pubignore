@@ -1,0 +1,16 @@
+# Exclude platform runners from the root package (they are for dev only)
+ios/
+android/
+macos/
+linux/
+windows/
+web/
+
+# Exclude secrets in example
+example/ios/Runner/GoogleService-Info.plist
+example/android/app/google-services.json
+example/lib/firebase_secrets.dart
+
+# Exclude generated files
+.dart_tool/
+build/

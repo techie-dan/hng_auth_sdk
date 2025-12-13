@@ -43,16 +43,3 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-
-# Firebase Secrets
-lib/firebase_secrets.dart
-
-# Firebase Config Files
-ios/Runner/GoogleService-Info.plist
-android/google-services.json*
-
-# Example App Secrets
-example/lib/firebase_secrets.dart
-example/ios/Runner/GoogleService-Info.plist
-example/android/app/google-services.json
-
